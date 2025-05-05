@@ -139,6 +139,9 @@ You can find the official **JourneyApp.me** <em style="color: orange;">Privacy P
 
 **IDEs & Text Editors**
 
+![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)
+![GoLand](https://img.shields.io/badge/GoLand-0f0f0f?&logo=goland&logoColor=white)
+![Android Studio](https://img.shields.io/badge/android%20studio-346ac1?logo=android%20studio&logoColor=white)
 ![Xcode](https://img.shields.io/badge/Xcode-007ACC?logo=Xcode&logoColor=white)
 ![Neovim](https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=fff)
 
