@@ -20,7 +20,7 @@ func HandleCreateAccount(evt eventbus.Event) error {
 
 	name, _ := evt.Payload["username"].(string)
 	cache.SaveUser(ctx, evt.UserID, evt.Firebase, name)
-	
+
 	meta := map[string]any{
 		"source": "backend",
 	}
@@ -33,6 +33,8 @@ func HandleCreateAccount(evt eventbus.Event) error {
 
 	if err == nil {
 		log.Printf("[users-worker] processed create_account for user_id=%d", evt.UserID)
+	} else {
+		log.Printf("Something went wrong trying to store create_account event analytics: %v", err)
 	}
 	return err
 }
