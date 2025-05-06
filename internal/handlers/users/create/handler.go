@@ -47,6 +47,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 		Type:      eventbus.EventCreateAccount,
 		UserID:    userID,
 		Firebase:  fbUser.UID,
+		Payload:   map[string]any{"username": req.DisplayName},
 		Timestamp: time.Now().UTC(),
 	}
 	_ = deps.Bus.Publish(ctx, "users", evt)
