@@ -11,7 +11,7 @@ import (
 )
 
 var RDB = redis.NewClient(&redis.Options{
-	Addr: "redis:6379",
+	Addr: "localhost:6379", // change localhost to redis when in Docker Compose network
 })
 
 func SaveUser(ctx context.Context, userID int64, fbID, name string) {
