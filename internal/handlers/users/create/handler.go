@@ -8,12 +8,11 @@ import (
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/db"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/firebase"
+	"github.com/mrrobotisreal/journey-app-server-refresh/internal/glue/deps"
 	models "github.com/mrrobotisreal/journey-app-server-refresh/internal/models/users/create"
 	"net/http"
 	"time"
 )
-
-var bus *eventbus.Bus
 
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -50,7 +49,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 		Firebase:  fbUser.UID,
 		Timestamp: time.Now().UTC(),
 	}
-	_ = bus.Publish(ctx, "users", evt)
+	_ = deps.Bus.Publish(ctx, "users", evt)
 
 	json.NewEncoder(w).Encode(models.CreateAccountResponse{userID, apiKey})
 }
