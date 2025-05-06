@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/mrrobotisreal/journey-app-server-refresh/internal/cache"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
-	"github.com/mrrobotisreal/journey-app-server-refresh/internal/workers/flush"
 	usersworker "github.com/mrrobotisreal/journey-app-server-refresh/internal/workers/users"
 	"log"
 	"os"
@@ -26,8 +24,8 @@ func main() {
 	log.Printf("Worker is connecting to brokers: %v", brokers)
 
 	go eventbus.Consume(ctx, brokers, "users", "users-analytics", usersworker.HandleCreateAccount)
-	go eventbus.Consume(ctx, brokers, "auth", "analytics-svc", flush.Handle)
-	go eventbus.Consume(ctx, brokers, "entries", "redis-flush", cache.HandleEntry)
+	//go eventbus.Consume(ctx, brokers, "auth", "analytics-svc", flush.Handle)
+	//go eventbus.Consume(ctx, brokers, "entries", "redis-flush", cache.HandleEntry)
 
 	select {} // block forever
 }

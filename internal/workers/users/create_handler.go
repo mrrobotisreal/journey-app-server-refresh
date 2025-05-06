@@ -12,6 +12,7 @@ import (
 )
 
 func HandleCreateAccount(evt eventbus.Event) error {
+	log.Printf("DEBUG got raw event: %+v", evt)
 	if evt.Type != eventbus.EventCreateAccount {
 		return nil
 	}
@@ -30,6 +31,7 @@ func HandleCreateAccount(evt eventbus.Event) error {
 		`INSERT INTO analytics_events (user_id, fb_id, event_type, meta_data, event_time)
 		 VALUES (?, ?, 'create_account', ?, ?)`,
 		evt.UserID, evt.Firebase, string(blob), time.Now().UTC())
+	log.Printf("Logging err after create_account event: %v", err)
 
 	if err == nil {
 		log.Printf("[users-worker] processed create_account for user_id=%d", evt.UserID)
