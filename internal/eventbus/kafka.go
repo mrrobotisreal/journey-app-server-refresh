@@ -33,9 +33,10 @@ func (b *Bus) Publish(ctx context.Context, topic string, evt Event) error {
 
 func Consume(ctx context.Context, brokers []string, topic, group string, fn func(Event) error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: brokers,
-		GroupID: group,
-		Topic:   topic,
+		Brokers:     brokers,
+		GroupID:     group,
+		Topic:       topic,
+		StartOffset: kafka.FirstOffset,
 	})
 
 	for {
