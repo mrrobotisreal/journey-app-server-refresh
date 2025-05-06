@@ -22,7 +22,7 @@ type Event struct {
 	ID        uuid.UUID      `json:"id"`
 	Type      EventType      `json:"type"`
 	UserID    int64          `json:"user_id"`
-	Firebase  string         `json:"fb_id"`
+	Firebase  string         `json:"firebase"`
 	Payload   map[string]any `json:"payload,omitempty"`
 	Timestamp time.Time      `json:"ts"`
 }
