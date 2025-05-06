@@ -30,41 +30,45 @@ func InitDB() error {
 	}
 
 	fmt.Println("MySQL connected and schema ensured.")
+
+	Repo = &Repository{DB}
+
 	return nil
 }
 
 func createTables() error {
 	usersTable := `
 	CREATE TABLE IF NOT EXISTS users (
-		user_id VARCHAR(36) PRIMARY KEY,
-		username VARCHAR(50) NOT NULL UNIQUE,
-		password VARCHAR(255) NOT NULL,
-		salt VARCHAR(50) NOT NULL,
-		api_key VARCHAR(100) NOT NULL UNIQUE,
-		api_key_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		api_key_last_used DATETIME,
+		user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+		fb_id VARCHAR(255) NOT NULL UNIQUE,
+		email VARCHAR(320) NOT NULL UNIQUE,
+		username VARCHAR(255),
+		api_key CHAR(36) NOT NULL UNIQUE,
+		api_key_created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		api_key_last_used_at DATETIME,
 		api_key_expires_at DATETIME,
 		font VARCHAR(50),
-		INDEX idx_username (username)
+	    theme ENUM('light', 'dark') DEFAULT 'dark',
+	    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		INDEX idx_user_fb   (fb_id),
+		INDEX idx_user_email(email)
 	);`
 
 	entriesTable := `
 	CREATE TABLE IF NOT EXISTS entries (
-		entry_id VARCHAR(36) PRIMARY KEY,
-		user_id VARCHAR(36) NOT NULL,
-		username VARCHAR(50) NOT NULL,
+		entry_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+		user_id BIGINT NOT NULL,
 		text TEXT NOT NULL,
-		timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		last_updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		last_updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-		INDEX idx_user_timestamp (user_id, timestamp),
-		INDEX idx_username (username)
+		INDEX idx_user_created (user_id, created_at)
 	);`
 
 	entryLocationsTable := `
 	CREATE TABLE IF NOT EXISTS entry_locations (
 		location_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id VARCHAR(36) NOT NULL,
+		entry_id BIGINT NOT NULL,
 		latitude DOUBLE NOT NULL,
 		longitude DOUBLE NOT NULL,
 		display_name VARCHAR(255),
@@ -75,8 +79,8 @@ func createTables() error {
 	entryTagsTable := `
 	CREATE TABLE IF NOT EXISTS entry_tags (
 		tag_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id VARCHAR(36) NOT NULL,
-		tag_key VARCHAR(50) NOT NULL,
+		entry_id BIGINT NOT NULL,
+		tag_key VARCHAR(255) NOT NULL,
 		tag_value VARCHAR(255),
 		FOREIGN KEY (entry_id) REFERENCES entries(entry_id) ON DELETE CASCADE,
 		INDEX idx_entry_tag (entry_id, tag_key),
@@ -86,8 +90,8 @@ func createTables() error {
 	entryImagesTable := `
 	CREATE TABLE IF NOT EXISTS entry_images (
 		image_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id VARCHAR(36) NOT NULL,
-		image_url VARCHAR(255) NOT NULL,
+		entry_id BIGINT NOT NULL,
+		image_url VARCHAR(320) NOT NULL,
 		FOREIGN KEY (entry_id) REFERENCES entries(entry_id) ON DELETE CASCADE,
 		INDEX idx_entry_id (entry_id)
 	);`
@@ -96,10 +100,11 @@ func createTables() error {
 	analyticsEventsTable := `
 	CREATE TABLE IF NOT EXISTS analytics_events (
 		event_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		user_id VARCHAR(36) NOT NULL,
+		user_id BIGINT NOT NULL,
+		fb_id VARCHAR(255) NOT NULL,
 		event_type VARCHAR(100) NOT NULL,
 		object_type VARCHAR(100),
-		object_id VARCHAR(36),
+		object_id BIGINT,
 		event_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		meta_data JSON,
 		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
@@ -109,9 +114,6 @@ func createTables() error {
 
 	// Indexes
 	indexQueries := []string{
-		`CREATE INDEX idx_entries_username ON entries(username)`,
-		`CREATE INDEX idx_entries_id_user_timestamp ON entries(entry_id, user_id, timestamp)`,
-		`CREATE INDEX idx_entries_username_timestamp ON entries(username, timestamp)`,
 		`CREATE FULLTEXT INDEX idx_entries_text ON entries(text)`,
 		`CREATE INDEX idx_entry_locations_entry_id ON entry_locations(entry_id)`,
 		`CREATE INDEX idx_entry_tags_entry_id_key ON entry_tags(entry_id, tag_key)`,
