@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/joho/godotenv"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/db"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
 	usersworker "github.com/mrrobotisreal/journey-app-server-refresh/internal/workers/users"
@@ -19,6 +20,8 @@ func brokersFromEnv() []string {
 }
 
 func main() {
+	_ = godotenv.Load()
+
 	if err := db.InitDB(); err != nil {
 		log.Fatalf("DB init failed: %v", err)
 	}
