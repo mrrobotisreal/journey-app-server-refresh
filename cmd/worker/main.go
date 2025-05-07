@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/mrrobotisreal/journey-app-server-refresh/internal/db"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
 	usersworker "github.com/mrrobotisreal/journey-app-server-refresh/internal/workers/users"
 	"log"
@@ -18,6 +19,10 @@ func brokersFromEnv() []string {
 }
 
 func main() {
+	if err := db.InitDB(); err != nil {
+		log.Fatalf("DB init failed: %v", err)
+	}
+
 	ctx := context.Background()
 	brokers := brokersFromEnv()
 
