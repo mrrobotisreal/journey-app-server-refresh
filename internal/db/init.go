@@ -56,7 +56,7 @@ func createTables() error {
 
 	entriesTable := `
 	CREATE TABLE IF NOT EXISTS entries (
-		entry_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+		entry_id VARCHAR(36) NOT NULL PRIMARY KEY,
 		user_id BIGINT NOT NULL,
 		text TEXT NOT NULL,
 		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,7 +68,7 @@ func createTables() error {
 	entryLocationsTable := `
 	CREATE TABLE IF NOT EXISTS entry_locations (
 		location_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id BIGINT NOT NULL,
+		entry_id VARCHAR(36) NOT NULL,
 		latitude DOUBLE NOT NULL,
 		longitude DOUBLE NOT NULL,
 		display_name VARCHAR(255),
@@ -79,7 +79,7 @@ func createTables() error {
 	entryTagsTable := `
 	CREATE TABLE IF NOT EXISTS entry_tags (
 		tag_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id BIGINT NOT NULL,
+		entry_id VARCHAR(36) NOT NULL,
 		tag_key VARCHAR(255) NOT NULL,
 		tag_value VARCHAR(255),
 		FOREIGN KEY (entry_id) REFERENCES entries(entry_id) ON DELETE CASCADE,
@@ -90,7 +90,7 @@ func createTables() error {
 	entryImagesTable := `
 	CREATE TABLE IF NOT EXISTS entry_images (
 		image_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-		entry_id BIGINT NOT NULL,
+		entry_id VARCHAR(36) NOT NULL,
 		image_url VARCHAR(320) NOT NULL,
 		FOREIGN KEY (entry_id) REFERENCES entries(entry_id) ON DELETE CASCADE,
 		INDEX idx_entry_id (entry_id)

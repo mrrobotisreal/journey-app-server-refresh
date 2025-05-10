@@ -8,6 +8,7 @@ import (
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/firebase"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/glue/deps"
+	handlers_entries_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/entries/create"
 	handlers_users_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/users/create"
 	"log"
 	"net/http"
@@ -35,6 +36,7 @@ func main() {
 	deps.Bus = bus
 
 	http.HandleFunc("/users/create", handlers_users_create.CreateAccount)
+	http.HandleFunc("/entries/create", handlers_entries_create.CreateEntry)
 
 	fmt.Println("Server up and running on port 6913...")
 

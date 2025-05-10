@@ -52,5 +52,5 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = deps.Bus.Publish(ctx, "users", evt)
 
-	json.NewEncoder(w).Encode(models.CreateAccountResponse{userID, apiKey})
+	json.NewEncoder(w).Encode(models.CreateAccountResponse{UserID: userID, APIKey: apiKey})
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/db"
 	"github.com/mrrobotisreal/journey-app-server-refresh/internal/eventbus"
+	models_entries_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/models/entries/create"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -27,9 +28,16 @@ func TouchUser(ctx context.Context, userID int64) {
 	RDB.Expire(ctx, fmt.Sprintf("user:%d", userID), 24*time.Hour)
 }
 
-func SaveEntry(ctx context.Context, entryID int64, data []byte) {
-	key := fmt.Sprintf("entry:%d", entryID)
-	RDB.Set(ctx, key, data, 15*time.Minute)
+func SaveEntry(ctx context.Context, entry models_entries_create.CreateEntryRequest) {
+	key := fmt.Sprintf("entry:%s", entry.ID)
+	RDB.HSet(ctx, key, map[string]any{
+		"ID":        entry.ID,
+		"userID":    entry.UserID,
+		"text":      entry.Text,
+		"locations": entry.Locations,
+		"tags":      entry.Tags,
+		"images":    entry.Images,
+	}, 30*time.Minute).Result()
 }
 
 func HandleEntry(evt eventbus.Event) error {
