@@ -3,8 +3,9 @@ package db
 import (
 	"context"
 	"database/sql"
-	models_entries_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/models/entries/create"
 	"log"
+
+	models_entries_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/models/entries/create"
 
 	"github.com/google/uuid"
 )
@@ -94,4 +95,31 @@ func (r *Repository) InsertEntry(ctx context.Context, entry models_entries_creat
 	}
 
 	return nil
+}
+
+func (r *Repository) ListEntries(ctx context.Context, userID, page, limit int) ([]models_entries_create.Entry, error) {
+	offset := (page - 1) * limit
+	rows, err := r.QueryContext(ctx, `
+		SELECT entry_id, user_id, text, created_at, updated_at
+		FROM entries
+		ORDER BY created_at DESC
+		WHERE user_id = ?
+		LIMIT ? OFFSET ?
+	`, userID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	entries := []models_entries_create.Entry{}
+	for rows.Next() {
+		var entry models_entries_create.Entry
+		err = rows.Scan(&entry.ID, &entry.UserID, &entry.Text, &entry.CreatedAt, &entry.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, entry)
+	}
+
+	return entries, nil
 }
