@@ -15,6 +15,7 @@ import (
 	handlers_entries_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/entries/create"
 	handlers_entries_read "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/entries/read"
 	handlers_users_create "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/users/create"
+	handlers_users_login "github.com/mrrobotisreal/journey-app-server-refresh/internal/handlers/users/login"
 )
 
 func main() {
@@ -38,6 +39,7 @@ func main() {
 	deps.Bus = bus
 
 	http.HandleFunc("/users/create", handlers_users_create.CreateAccount)
+	http.HandleFunc("/users/login", handlers_users_login.Login)
 	http.HandleFunc("/entries/create", handlers_entries_create.CreateEntry)
 	http.HandleFunc("/entries/list", handlers_entries_read.ListEntries)
 	fmt.Println("Server up and running on port 6913...")

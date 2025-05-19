@@ -36,6 +36,20 @@ func (r *Repository) GetUserByFirebase(ctx context.Context, fbID string) (int64,
 	return id, err
 }
 
+func (r *Repository) GetUserByFirebaseLogin(ctx context.Context, fbID string) (int64, string, string, error) {
+	var userID int64
+	var username, apiKey string
+	err := r.QueryRowContext(ctx,
+		`SELECT user_id, username, api_key FROM users WHERE fb_id = ?`, fbID).Scan(&userID, &username, &apiKey)
+
+	if err == nil {
+		_, _ = r.ExecContext(ctx,
+			`UPDATE users SET api_key_last_used_at = CURRENT_TIMESTAMP WHERE user_id = ?`, userID)
+	}
+
+	return userID, username, apiKey, err
+}
+
 /******** Entries ********/
 
 func (r *Repository) PersistEntry(ctx context.Context, entryID int64, data []byte) error {
